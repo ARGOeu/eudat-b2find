@@ -28,7 +28,6 @@ This nagios plugin provides the nessecary script to check search functionality o
 %define _unpackaged_files_terminate_build 0 
 
 %install
-
 install -d %{buildroot}/%{_libexecdir}/argo-monitoring/probes/eudat-b2find
 install -d %{buildroot}/%{_sysconfdir}/nagios/plugins/eudat-b2find
 install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo-monitoring/probes/eudat-b2find/checkB2FIND.py
@@ -42,7 +41,8 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo-monitoring/probes
 %attr(0755,root,root) /%{_libexecdir}/argo-monitoring/probes/eudat-b2find/checkB2FIND.py
 %attr(0755,root,root) /%{_sysconfdir}/nagios/plugins/eudat-b2find
 
-%post
+%pre
+
 %changelog
 * Tue Mar 07 2017  Heinrich Widmann <widmann@dkrz.de> 0.1
 - Initial version of b2find nagios plugin
