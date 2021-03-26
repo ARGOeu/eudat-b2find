@@ -6,7 +6,6 @@ License:	GPLv3+
 Packager:	Heinrich Widmann <widmann@dkrz.de>
 Group:		Application
 URL:		http://www.eudat.eu/b2find
-
 Source:		%{name}-%{version}.tar.gz
 BuildArch:	noarch
 BuildRoot:	%{_tmppath}/%{name}-%{version}
@@ -39,7 +38,6 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo-monitoring/probes
 %dir /%{_sysconfdir}/nagios/plugins/eudat-b2find
 
 %attr(0755,root,root) /%{_libexecdir}/argo-monitoring/probes/eudat-b2find/checkB2FIND.py
-%attr(0755,root,root) /%{_sysconfdir}/nagios/plugins/eudat-b2find
 
 %pre
 
