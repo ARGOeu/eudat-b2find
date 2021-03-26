@@ -1,6 +1,6 @@
 Name:		eudat-b2find
 Version:	2.2
-Release:	0
+Release:	1%{?dist}
 Summary:	Nagios B2FIND probes
 License:	GPLv3+
 Packager:	Heinrich Widmann <widmann@dkrz.de>
@@ -38,7 +38,6 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo-monitoring/probes
 %dir /%{_libexecdir}/argo-monitoring/probes/
 %dir /%{_libexecdir}/argo-monitoring/probes/eudat-b2find
 %dir /%{_sysconfdir}/nagios/plugins/eudat-b2find
-
 
 %attr(0755,root,root) /%{_libexecdir}/argo-monitoring/probes/eudat-b2find/checkB2FIND.py
 %attr(0755,root,root) /%{_sysconfdir}/nagios/plugins/eudat-b2find
