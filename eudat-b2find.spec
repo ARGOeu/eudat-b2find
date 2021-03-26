@@ -6,10 +6,11 @@ License:	GPLv3+
 Packager:	Heinrich Widmann <widmann@dkrz.de>
 Group:		Application
 URL:		http://www.eudat.eu/b2find
+
 Source:		%{name}-%{version}.tar.gz
 BuildArch:	noarch
 BuildRoot:	%{_tmppath}/%{name}-%{version}
-AutoReqProv: no
+
 
 #BuildRequires:	
 Requires:	python
@@ -20,10 +21,6 @@ Requires:	python-argparse
 
 %description
 This nagios plugin provides the nessecary script to check search functionality of the B2FIND discovery service b2find.eudat.eu .
-
-%define _whoami %(whoami)
-%define _b2findhomepackaging %(pwd)
-%define _b2findNagiosPackage /usr/libexec/argo-monitoring/probes/eudat-b2find
 
 %prep
 %setup -q
@@ -40,8 +37,11 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo-monitoring/probes
 %dir /%{_libexecdir}/argo-monitoring
 %dir /%{_libexecdir}/argo-monitoring/probes/
 %dir /%{_libexecdir}/argo-monitoring/probes/eudat-b2find
+%dir /%{_sysconfdir}/nagios/plugins/eudat-b2find
+
 
 %attr(0755,root,root) /%{_libexecdir}/argo-monitoring/probes/eudat-b2find/checkB2FIND.py
+%attr(0755,root,root) /%{_sysconfdir}/nagios/plugins/eudat-b2find
 
 %post
 %changelog
