@@ -1,5 +1,5 @@
 Name:		eudat-b2find
-Version:	2.2
+Version:	2.3
 Release:	1%{?dist}
 Summary:	Nagios B2FIND probes
 License:	GPLv3+
@@ -43,6 +43,7 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo-monitoring/probes
 %pre
 
 %changelog
+* Fri Mar 26 2021 Themis Zamani <themis@admin.grnet.gr> - 2.3-1
 * Wed Mar 24 2021 Themis Zamani <themis@admin.grnet.gr> - 2.2-1
 - Add rpm dependencies
 * Tue Mar 07 2017  Heinrich Widmann <widmann@dkrz.de> 0.1
