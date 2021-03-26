@@ -21,7 +21,6 @@ import argparse
 import timeout_decorator
 import urllib2, urllib, socket
 import json, pprint
-import ckanclient
 
 
 def check_url(url):
@@ -36,7 +35,7 @@ def check_url(url):
     # 1. (boolean)  result
 
     rta=0
-    resplen='--'
+    resplen=''
     try:
         start=time.time()
         if (urllib2.urlopen(url, timeout=1).getcode() < 501):
@@ -144,19 +143,18 @@ def checkProbes(args):
     ## Settings for CKAN client and API
     ## print 'args %s' % args
 
-    b2find_url='http://'+args.url
+    b2find_url='http://'+args.hostname
     if args.port :
          b2find_url+=':'+args.port
     print (' Check the service endpoint %s' % b2find_url)
     ckanapi3=b2find_url+'/api/3'
     ckanapi3act=b2find_url+'/api/3/action/'
-    ##HEW-D ckan = ckanclient.CkanClient(ckanapi3)
     ckan_limit=100
 
     start=time.time()
 
-    print ('| %-15s | %-7s | %-20s | %-7s | %-6s |' % ('Probe','RetCode','Message','ResLength','RTA'))
-    print ('-----------------------------------------------')
+##    print ('| %-15s | %-7s | %-20s | %-7s | %-6s |' % ('Probe','RetCode','Message','ResLength','RTA'))
+##    print ('-----------------------------------------------')
     suppProbes=['URLcheck','ListDatasets','ListCommunities','ShowGroupENES']
     if args.action == 'all' :
         probes=suppProbes
@@ -186,7 +184,7 @@ def checkProbes(args):
 
             answer = check_ckan_action(actionreq,data_dict,ckan_limit)
 
-        print ('| %-15s | %-7s | %-20s | %-7s | %-7.2f | ' % (probe,answer[0],answer[1],answer[2],answer[3]))
+        print (' %-15s - %-7s - %-20s - %-7s - %-7.2f ' % (probe,answer[0],answer[1],answer[2],answer[3]))
         if answer[0] > totretcode : totretcode = answer[0]
 
     return totretcode
@@ -200,7 +198,7 @@ def get_args():
     p.add_argument('--version', '-v', help="prints the B2FIND and CKAN version and exits", action='store_true')
     p.add_argument('--timeout', '-t', help="time out : After given number of seconds excecution terminates.", default=1000, metavar='INT')
     p.add_argument('--action', '-a', help="Action which has to be excecuted and checked. Supported actions are URLcheck, ListDatasets, ListCommunities, ShowGroupENES or all (default)", default='all', metavar='STRING')
-    p.add_argument('--url', '-u',  help='URL of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)', default='b2find.eudat.eu', metavar='URL')
+    p.add_argument('--hostname', '-H',  help='Hostname or IP address of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)', default='b2find.eudat.eu', metavar='URL')
     p.add_argument('--port', '-p',  help='(Optional) Port of the B2FIND service, to which probes are submitted (default is None)', default=None, metavar='URL')
 ##    p.add_argument('pattern',  help='CKAN search pattern, i.e. by logical conjunctions joined field:value terms.', default='*:*', metavar='PATTERN', nargs='*')
     
