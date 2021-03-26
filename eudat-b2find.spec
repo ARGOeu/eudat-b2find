@@ -4,12 +4,12 @@ Release:	0
 Summary:	Nagios B2FIND probes
 License:	GPLv3+
 Packager:	Heinrich Widmann <widmann@dkrz.de>
-
 Group:		Application
 URL:		http://www.eudat.eu/b2find
+Source:		%{name}-%{version}.tar.gz
 BuildArch:	noarch
-#Source0:	
-BuildRoot:	%(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
+BuildRoot:	%{_tmppath}/%{name}-%{version}
+AutoReqProv: no
 
 #BuildRequires:	
 Requires:	python
