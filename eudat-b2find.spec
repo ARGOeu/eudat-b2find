@@ -25,6 +25,26 @@ This nagios plugin provides the nessecary script to check search functionality o
 %define _b2findhomepackaging %(pwd)
 %define _b2findNagiosPackage /usr/libexec/argo-monitoring/probes/eudat-b2find
 
+%prep
+%setup -q
+
+%define _unpackaged_files_terminate_build 0 
+
+%install
+
+install -d %{buildroot}/%{_libexecdir}/argo-monitoring/probes/eudat-b2find
+install -d %{buildroot}/%{_sysconfdir}/nagios/plugins/eudat-b2find
+install -m 755 check_b2note.sh %{buildroot}/%{_libexecdir}/argo-monitoring/probes/eudat-b2find/checkB2FIND.py
+
+%files
+%dir /%{_libexecdir}/argo-monitoring
+%dir /%{_libexecdir}/argo-monitoring/probes/
+%dir /%{_libexecdir}/argo-monitoring/probes/eudat-b2find
+
+%attr(0755,root,root) /%{_libexecdir}/argo-monitoring/probes/eudat-b2find/checkB2FIND.py
+
+
+
 # get all our source code in the $RPM_SOURCE_DIR
 %prep
 echo "The spec file directory is %{_b2findhomepackaging}"
