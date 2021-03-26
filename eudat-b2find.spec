@@ -44,5 +44,7 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo-monitoring/probes
 %pre
 
 %changelog
+* Wed Mar 24 2021 Themis Zamani <themis@admin.grnet.gr> - 2.2-1
+- Add rpm dependencies
 * Tue Mar 07 2017  Heinrich Widmann <widmann@dkrz.de> 0.1
 - Initial version of b2find nagios plugin
