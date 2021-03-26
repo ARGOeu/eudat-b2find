@@ -1,6 +1,6 @@
 PKGNAME=eudat-b2find
 SPECFILE=${PKGNAME}.spec
-FILES=Makefile ${SPECFILE} checkB2FIND.sh
+FILES=Makefile ${SPECFILE} checkB2FIND.py
 
 PKGVERSION=$(shell grep -s '^Version:' $(SPECFILE) | sed -e 's/Version:\s*//')
 
