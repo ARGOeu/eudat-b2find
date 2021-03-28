@@ -1,6 +1,6 @@
 Name:		eudat-b2find
 Version:	2.4
-Release:	1%{?dist}
+Release:	2%{?dist}
 Summary:	Nagios B2FIND probes
 License:	GPLv3+
 Packager:	Heinrich Widmann <widmann@dkrz.de>
