@@ -184,6 +184,36 @@ def checkProbes(args):
 
     return totretcode
 
+def ValidateValues(arguments):
+        """ Validate values - input values """
+
+        if arguments.timeout <= 0:
+            print("\nInvalid timeout value: %s\n" % arguments.timeout)
+            print_help()
+            exit()
+
+        if arguments.hostname is None:
+            print("\nNo hostname provided\n")
+            print_help()
+            exit()
+
+
+def print_help():
+        """ Print help values."""
+
+        print("usage: checkB2FIND.py -H -p")
+        print("--- ---- ---- ---- ---- ---- ----\n")
+        print("main arguments:")
+        print("-H hostname, URL of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)")
+        print("\n")
+        print("optional arguments:")
+        print(" -h, --help  show this help message and exit")
+        print("-p port, The B2FIND server port.")
+        print("-t timeout, Time threshold to wait before timeout (in second).")
+        print("-v verbose")
+        print("-e version, Prints the B2FIND and CKAN version and exits.")
+        print("-a action,Action which has to be excecuted and checked. Supported actions are URLcheck, ListDatasets, ListCommunities, ShowGroupENES or all ")
+
 def get_args():
     p = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -199,6 +229,7 @@ def get_args():
 ##    p.add_argument('pattern',  help='CKAN search pattern, i.e. by logical conjunctions joined field:value terms.', default='*:*', metavar='PATTERN', nargs='*')
     
     args = p.parse_args()
+    ValidateValues(args)
     
     return args
                
