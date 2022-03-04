@@ -1,4 +1,4 @@
-PKGNAME=eudat-b2find
+PKGNAME=argo-probe-eudat-b2find
 SPECFILE=${PKGNAME}.spec
 FILES=checkB2FIND.py ${SPECFILE}
 PKGVERSION=$(shell grep -s '^Version:' $(SPECFILE) | sed -e 's/Version:\s*//')
