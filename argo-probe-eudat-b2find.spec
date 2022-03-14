@@ -26,7 +26,7 @@ This plugin provides the nessecary script to check search functionality of the B
 
 %define _unpackaged_files_terminate_build 0 
 
-install -d %{buildroot}/%{_sysconfdir}/argo/probes/eudat-b2find
+install -d %{buildroot}/%{_libexecdir}/argo/probes/eudat-b2find
 install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo/probes/eudat-b2find/checkB2FIND.py
 
 %files
