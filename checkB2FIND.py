@@ -133,7 +133,7 @@ def checkProbes(args):
     # # Settings for CKAN client and API
     # # print 'args %s' % args
 
-    b2find_url = 'http://'+args.url
+    b2find_url = 'http://'+args.hostname
     if args.port:
         b2find_url += ':'+args.port
     # print (' Check the service endpoint %s' % b2find_url)
@@ -184,6 +184,36 @@ def checkProbes(args):
 
     return totretcode
 
+def ValidateValues(arguments):
+        """ Validate values - input values """
+
+        if arguments.timeout <= 0:
+            print("\nInvalid timeout value: %s\n" % arguments.timeout)
+            print_help()
+            exit()
+
+        if arguments.hostname is None:
+            print("\nNo hostname provided\n")
+            print_help()
+            exit()
+
+
+def print_help():
+        """ Print help values."""
+
+        print("usage: checkB2FIND.py -H -p")
+        print("--- ---- ---- ---- ---- ---- ----\n")
+        print("main arguments:")
+        print("-H hostname, URL of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)")
+        print("\n")
+        print("optional arguments:")
+        print(" -h, --help  show this help message and exit")
+        print("-p port, The B2FIND server port.")
+        print("-t timeout, Time threshold to wait before timeout (in second).")
+        print("-v verbose")
+        print("-e version, Prints the B2FIND and CKAN version and exits.")
+        print("-a action,Action which has to be excecuted and checked. Supported actions are URLcheck, ListDatasets, ListCommunities, ShowGroupENES or all ")
+
 def get_args():
     p = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -193,12 +223,13 @@ def get_args():
     p.add_argument('--version', '-v', help="prints the B2FIND and CKAN version and exits", action='store_true')
     p.add_argument('--timeout', '-t', help="time out : After given number of seconds excecution terminates.", default=1000, metavar='INT')
     p.add_argument('--action', '-a', help="Action which has to be excecuted and checked. Supported actions are URLcheck, ListDatasets, ListCommunities, ShowGroupENES or all (default)", default='all', metavar='STRING')
-    p.add_argument('--url', '-H',  help='URL of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)', default='b2find.eudat.eu', metavar='URL')
+    p.add_argument('--hostname', '-H',  help='Hostname of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)', default='b2find.eudat.eu', metavar='URL')
     p.add_argument('--port', '-p',  help='(Optional) Port of the B2FIND service, to which probes are submitted (default is None)', default=None, metavar='URL')
 
 ##    p.add_argument('pattern',  help='CKAN search pattern, i.e. by logical conjunctions joined field:value terms.', default='*:*', metavar='PATTERN', nargs='*')
     
     args = p.parse_args()
+    ValidateValues(args)
     
     return args
                
