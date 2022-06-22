@@ -107,7 +107,7 @@ def check_ckan_action(actionreq, data, rows):
         retcode = 0
         assert response.status_code == 200
 
-        if actionreq.endswith('group_show'):
+        if actionreq.endswith('organization_show'):
             resplen = result['package_count']
         else:
             resplen = len(result)
@@ -166,9 +166,9 @@ def checkProbes(args):
             if probe == 'ListDatasets':
                 action = 'package_list'
             elif probe == 'ListCommunities':
-                action = 'group_list'
+                action = 'organization_list'
             elif probe == 'ShowGroupENES':
-                action = 'group_show'
+                action = 'organization_show'
                 data_dict = {'id': 'enes'}
             actionreq = ckanapi3act+action
 
