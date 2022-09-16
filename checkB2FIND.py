@@ -14,16 +14,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 """
 
-import logging
-import traceback
-import os
-import sys
-import io
-import time
 import argparse
-# import timeout_decorator
 import socket
-import json
+import sys
+import time
+
 import requests
 
 
@@ -68,29 +63,14 @@ def check_url(url, timeout):
 
     return retcode, msg, resplen, rta
 
-def check_ckan_action(actionreq, data, rows):
-    # Checks and validates a request or action submitted to CKAN
-    #
-    # Parameters:
-    # -----------
-    # (url)  url - Url to check
-    #
-    # Return Values:
-    # --------------
-    # 1. (boolean)  result
 
+def check_ckan_action(actionreq, data, timeout, rows):
     resplen = 0
     rta = 0
     try:
         start = time.time()
-        # #HEW-T print('actionreq %s' % actionreq)
-        # #HEW-T print('data %s' % data)
-        data_string = json.dumps(data).encode('utf8')
-        response = requests.get(actionreq, params=data) # # _string)
-        # #HEW-T print('response %s' % response)
+        response = requests.get(actionreq, timeout=timeout, params=data)
         result = response.json()['result']
-        # #records= json.loads(response.read())##['result']
-        # #print('records %s' % records[:10])
         rta = time.time()-start
 
     except socket.timeout as e:
@@ -101,10 +81,10 @@ def check_ckan_action(actionreq, data, rows):
         retcode = 1
     except ValueError as e:
         msg = " [ValueError] %s " % e
-        retcode = 1    # catched
+        retcode = 1    # caught
     except Exception as e:
         msg = "  [Error] %s " % e
-        retcode = 3    # catched
+        retcode = 3    # caught
     else:
         msg = '[OK]'
         retcode = 0
@@ -112,10 +92,12 @@ def check_ckan_action(actionreq, data, rows):
 
         if actionreq.endswith('organization_show'):
             resplen = result['package_count']
+
         else:
             resplen = len(result)
-        # print('resplen %s' % resplen)
-    return (retcode, msg, resplen, rta)
+
+    return retcode, msg, resplen, rta
+
 
 def main():
     B2FIND_version = '2.4'
@@ -130,30 +112,27 @@ def main():
 
     sys.exit(checkProbes(args))
 
-# # @timeout_decorator.timeout(args.timeout)
+
 def checkProbes(args):
-
     # # Settings for CKAN client and API
-    # # print 'args %s' % args
-
-    b2find_url = 'http://'+args.hostname
+    b2find_url = 'http://' + args.hostname
     if args.port:
-        b2find_url += ':'+args.port
-    # print (' Check the service endpoint %s' % b2find_url)
-    ckanapi3 = b2find_url+'/api/3'
+        b2find_url += ':' + args.port
+
     ckanapi3act = b2find_url+'/api/3/action/'
     ckan_limit = 100
 
-    start = time.time()
+    suppProbes = [
+        'URLcheck', 'ListDatasets', 'ListCommunities', 'ShowGroupENES'
+    ]
 
-    # print ('| %-15s | %-7s | %-20s | %-7s | %-6s |' % ('Probe','RetCode','Message','ResLength','RTA'))
-    # print ('-----------------------------------------------')
-    suppProbes = ['URLcheck', 'ListDatasets', 'ListCommunities', 'ShowGroupENES']
     if args.action == 'all':
         probes = suppProbes
+
     else:
         if args.action in suppProbes:
             probes = [args.action]
+
         else:
             print('Action %s is not supported' % args.action)
             sys.exit(-1)
@@ -163,78 +142,113 @@ def checkProbes(args):
         data_dict = {}
         if probe == 'URLcheck':
             answer = check_url(b2find_url, args.timeout)
-            # print ('| %s | %s | %s' % (probe,answer[0],answer[1]))
 
         else:
             if probe == 'ListDatasets':
                 action = 'package_list'
+
             elif probe == 'ListCommunities':
                 action = 'organization_list'
+
             elif probe == 'ShowGroupENES':
                 action = 'organization_show'
                 data_dict = {'id': 'enes'}
-            actionreq = ckanapi3act+action
 
-            answer = check_ckan_action(actionreq, data_dict, ckan_limit)
+            actionreq = ckanapi3act + action
 
-        # print ('| %-15s | %-7s | %-20s | %-7s | %-7.2f | ' % (probe,answer[0], answer[1], answer[2], answer[3]))
+            answer = check_ckan_action(
+                actionreq, data_dict, args.timeout, ckan_limit
+            )
 
-        print(' %-15s is %-7s - %-20s - %-7s - %-7.2f ' % (probe, answer[1], answer[0], answer[2], answer[3]))
+        print(
+                ' %-15s is %-7s - %-20s - %-7s - %-7.2f ' % (
+                    probe, answer[1], answer[0], answer[2], answer[3]
+                )
+        )
 
         print(' on service %s' % b2find_url)
 
-        if answer[0] > totretcode : totretcode = answer[0]
+        if answer[0] > totretcode:
+            totretcode = answer[0]
 
     return totretcode
 
+
 def ValidateValues(arguments):
-        """ Validate values - input values """
+    """ Validate values - input values """
 
-        if arguments.timeout <= 0:
-            print("\nInvalid timeout value: %s\n" % arguments.timeout)
-            print_help()
-            exit()
+    if arguments.timeout <= 0:
+        print("\nInvalid timeout value: %s\n" % arguments.timeout)
+        print_help()
+        exit()
 
-        if arguments.hostname is None:
-            print("\nNo hostname provided\n")
-            print_help()
-            exit()
+    if arguments.hostname is None:
+        print("\nNo hostname provided\n")
+        print_help()
+        exit()
 
 
 def print_help():
-        """ Print help values."""
+    """ Print help values."""
 
-        print("usage: checkB2FIND.py -H -p")
-        print("--- ---- ---- ---- ---- ---- ----\n")
-        print("main arguments:")
-        print("-H hostname, URL of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)")
-        print("\n")
-        print("optional arguments:")
-        print(" -h, --help  show this help message and exit")
-        print("-p port, The B2FIND server port.")
-        print("-t timeout, Time threshold to wait before timeout (in second).")
-        print("-v verbose")
-        print("-e version, Prints the B2FIND and CKAN version and exits.")
-        print("-a action,Action which has to be excecuted and checked. Supported actions are URLcheck, ListDatasets, ListCommunities, ShowGroupENES or all ")
+    print("usage: checkB2FIND.py -H -p")
+    print("--- ---- ---- ---- ---- ---- ----\n")
+    print("main arguments:")
+    print(
+        "-H hostname, URL of the B2FIND service, to which probes are submitted "
+        "(default is b2find.eudat.eu)"
+    )
+    print("\n")
+    print("optional arguments:")
+    print(" -h, --help  show this help message and exit")
+    print("-p port, The B2FIND server port.")
+    print("-t timeout, Time threshold to wait before timeout (in second).")
+    print("-v verbose")
+    print("-e version, Prints the B2FIND and CKAN version and exits.")
+    print(
+        "-a action,Action which has to be excecuted and checked. "
+        "Supported actions are URLcheck, ListDatasets, ListCommunities, "
+        "ShowGroupENES or all "
+    )
+
 
 def get_args():
     p = argparse.ArgumentParser(
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        description = "Description: Performs checks according different probes and returns the appropriate messages and codes."
+        description="Description: Performs checks according different probes "
+                    "and returns the appropriate messages and codes."
     )
 
-    p.add_argument('--version', '-v', help="prints the B2FIND and CKAN version and exits", action='store_true')
-    p.add_argument('--timeout', '-t', help="time out : After given number of seconds excecution terminates.", default=1000, type=float)
-    p.add_argument('--action', '-a', help="Action which has to be excecuted and checked. Supported actions are URLcheck, ListDatasets, ListCommunities, ShowGroupENES or all (default)", default='all', metavar='STRING')
-    p.add_argument('--hostname', '-H',  help='Hostname of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)', default='b2find.eudat.eu', metavar='URL')
-    p.add_argument('--port', '-p',  help='(Optional) Port of the B2FIND service, to which probes are submitted (default is None)', default=None, metavar='URL')
-
-##    p.add_argument('pattern',  help='CKAN search pattern, i.e. by logical conjunctions joined field:value terms.', default='*:*', metavar='PATTERN', nargs='*')
+    p.add_argument(
+        '--version', '-v', help="prints the B2FIND and CKAN version and exits",
+        action='store_true'
+    )
+    p.add_argument(
+        '--timeout', '-t', default=1000, type=float,
+        help="time out : After given number of seconds excecution terminates."
+    )
+    p.add_argument(
+        '--action', '-a', default='all', metavar='STRING',
+        help="Action which has to be excecuted and checked. "
+             "Supported actions are URLcheck, ListDatasets, ListCommunities, "
+             "ShowGroupENES or all (default)"
+    )
+    p.add_argument(
+        '--hostname', '-H', default='b2find.eudat.eu', metavar='URL',
+        help='Hostname of the B2FIND service, to which probes are submitted '
+             '(default is b2find.eudat.eu)'
+    )
+    p.add_argument(
+        '--port', '-p', default=None, metavar='URL',
+        help='(Optional) Port of the B2FIND service, to which probes are '
+             'submitted (default is None)'
+    )
 
     args = p.parse_args()
     ValidateValues(args)
 
     return args
+
 
 if __name__ == "__main__":
     main()
