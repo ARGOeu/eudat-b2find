@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-"""checkB2FIND.py  performs checks according different probes and 
+"""checkB2FIND.py  performs checks according different probes and
 returns the appropriate messages and codes.
 
 Copyright (c) 2016 Heinrich Widmann (DKRZ)
@@ -16,54 +16,57 @@ THE SOFTWARE.
 
 import logging
 import traceback
-import os 
+import os
 import sys
 import io
 import time
 import argparse
 # import timeout_decorator
 import socket
-import json 
+import json
 import requests
 
-def check_url(url):
-    # Checks and validates a url via urllib module
-    #
-    # Parameters:
-    # -----------
-    # (url)  url - Url to check
-    #
-    # Return Values:
-    # --------------
-    # 1. (boolean)  result
+
+def check_url(url, timeout):
+    """
+    Checks and validates URL using requests module
+    param url: URL being tested
+    param timeout: timeout in seconds
+    """
 
     rta = 0
     resplen = '--'
     try:
         start = time.time()
-        response = requests.get(url, timeout=1)
-        if(response.status_code < 501):    
-            msg = '[OK]'
-            retcode = 0
-        rta = time.time()-start
-        
-    except socket.timeout as e:
+        response = requests.get(url, timeout=timeout)
+        response.raise_for_status()
+        rta = time.time() - start
+
+    except requests.exceptions.Timeout as e:
         msg = "    [Socket Timeout] %s" % e
-        retcode = 2    #catched
+        retcode = 2    # caught
+
+    except requests.exceptions.HTTPError as e:
+        msg = "    [HTTPError] %s" % e
+        retcode = 2
+
     except IOError as e:
         msg = "    [IOError] %s" % e
         retcode = 1
+
     except ValueError as e:
         msg = "    [ValueError] %s" % e
-        retcode = 1    #catched
+        retcode = 1    # caught
+
     except Exception as e:
         msg = "    [Unknown Error] %s" % e
-        retcode = 3    #catched
+        retcode = 3    # caught
+
     else:
         msg = '[OK]'
         retcode = 0
 
-    return (retcode, msg, resplen, rta)
+    return retcode, msg, resplen, rta
 
 def check_ckan_action(actionreq, data, rows):
     # Checks and validates a request or action submitted to CKAN
@@ -84,7 +87,7 @@ def check_ckan_action(actionreq, data, rows):
         # #HEW-T print('data %s' % data)
         data_string = json.dumps(data).encode('utf8')
         response = requests.get(actionreq, params=data) # # _string)
-        # #HEW-T print('response %s' % response)            
+        # #HEW-T print('response %s' % response)
         result = response.json()['result']
         # #records= json.loads(response.read())##['result']
         # #print('records %s' % records[:10])
@@ -111,7 +114,7 @@ def check_ckan_action(actionreq, data, rows):
             resplen = result['package_count']
         else:
             resplen = len(result)
-        # print('resplen %s' % resplen) 
+        # print('resplen %s' % resplen)
     return (retcode, msg, resplen, rta)
 
 def main():
@@ -159,7 +162,7 @@ def checkProbes(args):
     for probe in probes:
         data_dict = {}
         if probe == 'URLcheck':
-            answer = check_url(b2find_url)
+            answer = check_url(b2find_url, args.timeout)
             # print ('| %s | %s | %s' % (probe,answer[0],answer[1]))
 
         else:
@@ -219,19 +222,19 @@ def get_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description = "Description: Performs checks according different probes and returns the appropriate messages and codes."
     )
-   
+
     p.add_argument('--version', '-v', help="prints the B2FIND and CKAN version and exits", action='store_true')
-    p.add_argument('--timeout', '-t', help="time out : After given number of seconds excecution terminates.", default=1000, metavar='INT')
+    p.add_argument('--timeout', '-t', help="time out : After given number of seconds excecution terminates.", default=1000, type=float)
     p.add_argument('--action', '-a', help="Action which has to be excecuted and checked. Supported actions are URLcheck, ListDatasets, ListCommunities, ShowGroupENES or all (default)", default='all', metavar='STRING')
     p.add_argument('--hostname', '-H',  help='Hostname of the B2FIND service, to which probes are submitted (default is b2find.eudat.eu)', default='b2find.eudat.eu', metavar='URL')
     p.add_argument('--port', '-p',  help='(Optional) Port of the B2FIND service, to which probes are submitted (default is None)', default=None, metavar='URL')
 
 ##    p.add_argument('pattern',  help='CKAN search pattern, i.e. by logical conjunctions joined field:value terms.', default='*:*', metavar='PATTERN', nargs='*')
-    
+
     args = p.parse_args()
     ValidateValues(args)
-    
+
     return args
-               
+
 if __name__ == "__main__":
     main()
