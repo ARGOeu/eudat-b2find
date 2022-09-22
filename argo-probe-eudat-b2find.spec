@@ -1,7 +1,7 @@
 Name:		argo-probe-eudat-b2find
-Version:	2.6
+Version:	2.7
 Release:	3%{?dist}
-Summary:	B2FIND metrics to check the functionality of the service. 
+Summary:	B2FIND metrics to check the functionality of the service.
 License:	GPLv3+
 Packager:	Heinrich Widmann <widmann@dkrz.de>
 Group:		Application
@@ -11,9 +11,10 @@ BuildArch:	noarch
 BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 
-#BuildRequires:	
+#BuildRequires:
 Requires:	python
 Requires:	python-argparse
+Requires:	python-requests
 #Requires:	python-json
 #Requires:	python-urllib
 #Requires:	python-urllib2
@@ -24,7 +25,7 @@ This plugin provides the nessecary script to check search functionality of the B
 %prep
 %setup -q
 
-%define _unpackaged_files_terminate_build 0 
+%define _unpackaged_files_terminate_build 0
 
 install -d %{buildroot}/%{_libexecdir}/argo/probes/eudat-b2find
 install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo/probes/eudat-b2find/checkB2FIND.py
@@ -39,6 +40,8 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo/probes/eudat-b2fi
 %pre
 
 %changelog
+* Thu Sep 22 2022 Katarina Zailac <kzailac@srce.hr> - 2.7-1
+- ARGO-3992 Fix how checkB2FIND.py probe handles timeout
 * Fri Jun 22 2022 Themis Zamani <themis@admin.grnet.gr> - 2.6-1
 * Fri Mar 04 2022 Themis Zamani <themis@admin.grnet.gr> - 2.5-3
 * Fri Mar 26 2021 Themis Zamani <themis@admin.grnet.gr> - 2.4-1
