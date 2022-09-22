@@ -1,5 +1,5 @@
 Name:		argo-probe-eudat-b2find
-Version:	2.6
+Version:	2.7
 Release:	3%{?dist}
 Summary:	B2FIND metrics to check the functionality of the service.
 License:	GPLv3+
@@ -40,6 +40,8 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo/probes/eudat-b2fi
 %pre
 
 %changelog
+* Thu Sep 22 2022 Katarina Zailac <kzailac@srce.hr> - 2.7-1
+- ARGO-3992 Fix how checkB2FIND.py probe handles timeout
 * Fri Jun 22 2022 Themis Zamani <themis@admin.grnet.gr> - 2.6-1
 * Fri Mar 04 2022 Themis Zamani <themis@admin.grnet.gr> - 2.5-3
 * Fri Mar 26 2021 Themis Zamani <themis@admin.grnet.gr> - 2.4-1
