@@ -152,7 +152,7 @@ def checkProbes(args):
 
             elif probe == 'ShowGroupENES':
                 action = 'organization_show'
-                data_dict = {'id': 'enes'}
+                data_dict = {'id': 'darus'}
 
             actionreq = ckanapi3act + action
 
