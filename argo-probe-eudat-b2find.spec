@@ -1,6 +1,6 @@
 Name:		argo-probe-eudat-b2find
-Version:	2.8
-Release:	3%{?dist}
+Version:	2.9
+Release:	1%{?dist}
 Summary:	B2FIND metrics to check the functionality of the service.
 License:	GPLv3+
 Packager:	Heinrich Widmann <widmann@dkrz.de>
@@ -12,12 +12,8 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}
 
 
 #BuildRequires:
-Requires:	python
-Requires:	python-argparse
-Requires:	python-requests
-#Requires:	python-json
-#Requires:	python-urllib
-#Requires:	python-urllib2
+Requires:	python3
+Requires:	python3-requests
 
 %description
 This plugin provides the nessecary script to check search functionality of the B2FIND discovery service b2find.eudat.eu .
@@ -40,6 +36,8 @@ install -m 755 checkB2FIND.py %{buildroot}/%{_libexecdir}/argo/probes/eudat-b2fi
 %pre
 
 %changelog
+* Fri Jul 31 2024 Themis Zamani <themis@admin.grnet.gr> - 2.9-1
+- Update/upgrade to python3 for Rocky9
 * Fri May 05 2023 Themis Zamani <themis@admin.grnet.gr> - 2.8-1
 - AO-790 Metrics b2find - showGroupEnes produces an UNKNOWN state
 * Thu Sep 22 2022 Katarina Zailac <kzailac@srce.hr> - 2.7-1
